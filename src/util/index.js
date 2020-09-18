@@ -2,6 +2,7 @@ import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 class Util {
+  // Set item in asyncstorage
   async setItem(key, value) {
     try {
       return await AsyncStorage.setItem(key, JSON.stringify(value));
@@ -10,6 +11,7 @@ class Util {
     }
   }
 
+  // Get item from asyncstorage
   async getItem(key) {
     return await AsyncStorage.getItem(key).then((result) => {
       if (result) {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, FlatList} from 'react-native';
+import {View, Text, FlatList} from 'react-native';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {NavigationEvents} from 'react-navigation';
@@ -42,6 +42,7 @@ class Home extends Component {
   };
 
   handleGetImageList = async () => {
+    // Get item from asyncstorage
     let imageList = await Util.getItem('imageList');
     this.setState({data: imageList ? imageList : [], isLoading: false});
   };
@@ -50,6 +51,7 @@ class Home extends Component {
     this.props.navigation.navigate(screenName);
   };
 
+  // Handler for control list and grid views
   handleViews = () => {
     const {rightTabIcon, rightTabText} = this.state;
     this.setState({
@@ -71,6 +73,7 @@ class Home extends Component {
     } = this.state;
     return (
       <View style={{...styles.container}}>
+        {/* Handler for navigation events */}
         <NavigationEvents onDidFocus={this.navigationEventsHandler} />
         <SpinnerLoader isLoading={isLoading} />
         <Header {...this.props} />
@@ -79,41 +82,58 @@ class Home extends Component {
           rightTabText={rightTabText}
           rightTabPress={this.handleViews}
         />
-        <View
-          style={
-            rightTabText === 'List View'
-              ? styles.gridCardContainer
-              : styles.listCardContainer
-          }>
-          <FlatList
-            key={rightTabText === 'List View' ? '#' : '_'}
-            numColumns={numColumns}
-            keyExtractor={(item) => `${item.Id}`}
-            data={data}
-            renderItem={({item}) =>
-              rightTabText === 'List View' ? (
-                <GridView
-                  imageUrl={item.ThumbnailUrl}
-                  cardText={item.Title}
-                  cardPress={() =>
-                    this.setState({showModal: true, selectedImageUrl: item.Url})
-                  }
-                />
-              ) : (
-                <ListView
-                  imageUrl={item.ThumbnailUrl}
-                  cardText={item.Title}
-                  cardPress={() =>
-                    this.setState({showModal: true, selectedImageUrl: item.Url})
-                  }
-                />
-              )
-            }
-          />
-        </View>
+        {data.length > 0 ? (
+          <View
+            style={
+              rightTabText === 'List View'
+                ? styles.gridCardContainer
+                : styles.listCardContainer
+            }>
+            {/* Resource List */}
+            <FlatList
+              key={rightTabText === 'List View' ? '#' : '_'}
+              numColumns={numColumns}
+              keyExtractor={(item) => `${item.Id}`}
+              data={data}
+              renderItem={({item}) =>
+                rightTabText === 'List View' ? (
+                  <GridView
+                    imageUrl={item.ThumbnailUrl}
+                    cardText={item.Title}
+                    cardPress={() =>
+                      this.setState({
+                        showModal: true,
+                        selectedImageUrl: item.Url,
+                      })
+                    }
+                  />
+                ) : (
+                  <ListView
+                    imageUrl={item.ThumbnailUrl}
+                    cardText={item.Title}
+                    cardPress={() =>
+                      this.setState({
+                        showModal: true,
+                        selectedImageUrl: item.Url,
+                      })
+                    }
+                  />
+                )
+              }
+            />
+          </View>
+        ) : (
+          // Warning msg when no data exists
+          <View style={{...styles.nothingTextContainer}}>
+            {!isLoading ? (
+              <Text style={{...styles.nothingText}}>Nothing to show!</Text>
+            ) : null}
+          </View>
+        )}
         <FloatingActionButton
           actionBtnPress={() => this.handleNavigation('AddPhoto')}
         />
+        {/* Modal for image preview */}
         <ImagePreviewModal
           isVisible={showModal}
           onBackdropPress={() => this.setState({showModal: false})}

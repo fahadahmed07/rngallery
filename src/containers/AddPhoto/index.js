@@ -39,6 +39,7 @@ class AddPhoto extends Component {
       },
     };
 
+    // Image picker modal
     ImagePicker.showImagePicker(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -57,6 +58,7 @@ class AddPhoto extends Component {
 
   onChangeImageTitle = (text) => this.setState({imageTitle: text});
 
+  // Control form validations
   checkValidation = () => {
     const {selectedImage, imageTitle} = this.state;
     if (!selectedImage) {
@@ -93,15 +95,19 @@ class AddPhoto extends Component {
       ThumbnailUrl: selectedImage.uri,
     };
     if (imageList) {
+      // Set item in asyncstorage
       await Util.setItem('imageList', [newImage, ...imageList]);
       this.setState({isLoading: false}, () => {
+        // Confirmation alert after success
         Util.showConfirmAlert('Success', 'Successfully posted.', () =>
           this.handleNavigation('Home'),
         );
       });
     } else {
+      // Set item in asyncstorage
       await Util.setItem('imageList', [newImage]);
       this.setState({isLoading: false}, () => {
+        // Confirmation alert after success
         Util.showConfirmAlert('Success', 'Successfully posted.', () =>
           this.handleNavigation('Home'),
         );
@@ -136,6 +142,7 @@ class AddPhoto extends Component {
             placeholderText={'Image Title'}
             onChange={(text) => this.onChangeImageTitle(text)}
           />
+          {/* Shows form errors */}
           {formError ? <ErrorText errorText={formError} /> : null}
           <CustomButton
             btnText={'Post'}

@@ -15,4 +15,14 @@ export default StyleSheet.create({
     flex: 1,
     padding: Metrics.ratio(8),
   },
+  nothingTextContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nothingText: {
+    fontSize: Metrics.ratio(16),
+    color: Colors.Cod_Gray,
+    textAlign: 'center',
+  },
 });
